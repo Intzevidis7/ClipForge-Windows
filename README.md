@@ -1,93 +1,87 @@
-# ClipForge for Windows (source build)
+# ClipForge for Windows — setup guide
 
-ClipForge runs as a local browser app on Windows. It transcribes videos with faster-whisper, asks local Ollama to pick candidate moments, exports MP4 clips with FFmpeg, and lets you edit captions before burning a karaoke-captioned copy. This is **not** a prebuilt `.exe`: setup creates a fresh Python environment on the Windows PC.
+ClipForge is a local browser app that turns videos into candidate short clips. You can review the clips and correct captions before burning a karaoke-style version. This repository contains **Python source**, not a prebuilt Windows `.exe`.
 
-## Required files
+## 1. Download this project
 
-Copy the **working** project source files into one folder:
+On the GitHub repository page, click **Code → Download ZIP**. Extract the ZIP somewhere easy to find, such as `C:\ClipForge-Windows`. Open that extracted folder; `setup-windows.cmd` and `run-windows.cmd` should be beside `app.py`, `main.py`, `scorer.py`, `caption_editor.py`, and `requirements.txt`.
 
-```text
-app.py
-caption_editor.py
-main.py
-scorer.py
-transcriber.py
-clip_exporter.py
-scene_detector.py
-requirements.txt
-setup-windows.cmd
-run-windows.cmd
-README-WINDOWS.md
-```
+If you already downloaded the repository as a ZIP, **extract it first**. Do not run the `.cmd` files from inside the ZIP preview.
 
-Use the resumable `main.py` that loads existing transcripts and the indexed-line `scorer.py`. Do not copy the Linux `venv/` or `clips/` folder into a public repo, and do not copy Python virtual environments between PCs.
+## 2. Install Python 3.12
 
-## Before setup
-
-1. Install **Python 3.12 (64-bit)** with the Windows `py` launcher from [python.org](https://www.python.org/downloads/). A newer default Python does not replace the need for Python 3.12 for this project's pinned PyAV dependency.
-2. Install [FFmpeg for Windows](https://ffmpeg.org/download.html). Put its `bin` folder, containing `ffmpeg.exe` and `ffprobe.exe`, on your PATH. Reopen the terminal after changing PATH. The build must support `libx264`, `aac`, and `ass`/libass for karaoke captions.
-3. Install [Ollama for Windows](https://ollama.com/download/windows) and start it. Setup will pull `llama3.2:3b` if missing. This is a separate application, not bundled into ClipForge.
-4. Have an internet connection for initial package and model downloads and enough disk space for the source video, output clips, and AI models.
-
-In **Command Prompt**, check:
+1. Open the official [Python 3.12.10 release page](https://www.python.org/downloads/release/python-31210/).
+2. Scroll to **Files → Windows → Windows installer (64-bit)**. Download and run that installer. Do not choose the embeddable package, source tarball, or 32-bit installer.
+3. On the installer's first page, tick **Add python.exe to PATH** and leave the **Python launcher / py launcher** option enabled. Then click **Install Now** and finish the installer.
+4. Open a **new Command Prompt** (Start menu → type `cmd` → Enter) and type:
 
 ```bat
 py -3.12 --version
+```
+
+It must show `Python 3.12.x`. If `py` is not recognized, rerun the Python installer and enable the Python launcher. A newer Python already installed on your PC does **not** replace this requirement.
+
+## 3. Install FFmpeg
+
+1. Open the [Gyan FFmpeg builds page](https://www.gyan.dev/ffmpeg/builds/). This build provider is linked by the [official FFmpeg download page](https://ffmpeg.org/download.html).
+2. In **Release builds**, download `ffmpeg-release-essentials.zip` (the ZIP, not the 7z archive). Its essentials build includes libass and libx264, which this app needs for captions and MP4 export.
+3. Extract the ZIP in File Explorer. Open the extracted folder, then its `bin` subfolder. Confirm you can see `ffmpeg.exe` and `ffprobe.exe`.
+4. Move the extracted folder to a permanent location, for example `C:\ffmpeg`. The exact `bin` path may be `C:\ffmpeg\ffmpeg-<version>-essentials_build\bin`; use the folder that **actually contains** `ffmpeg.exe` rather than guessing.
+5. Add that `bin` folder to your **user PATH**: press Start, search **Edit environment variables for your account**, open it, select **Path** under *User variables*, click **Edit → New**, paste the full `bin` folder path, then click **OK** on every window.
+6. Open a **new Command Prompt** and test:
+
+```bat
 ffmpeg -version
 ffprobe -version
+ffmpeg -hide_banner -filters | findstr ass
+```
+
+The first two commands must print version information. The last should show the `ass` filter for karaoke captions. If a command says “not recognized,” recheck the `bin` path and open a new terminal after changing PATH.
+
+## 4. Install Ollama
+
+1. Open the official [Ollama Windows download page](https://ollama.com/download/windows) and choose **Download for Windows**.
+2. Run the downloaded installer. After it finishes, open a **new Command Prompt** and check:
+
+```bat
+ollama --version
 ollama list
 ```
 
-If you see 'not recognized', install that prerequisite or reopen Command Prompt so updated PATH is loaded.
+If `ollama` is not recognized, launch Ollama from the Start menu, then reopen Command Prompt. The setup script will download `llama3.2:3b` if it is not already installed, so you need internet access for the first setup. Ollama runs locally in the background on Windows.
 
-## Install and run
+## 5. Run ClipForge setup
 
-Open the project folder in File Explorer. Double-click `setup-windows.cmd` once. It creates `venv\` with Python 3.12, installs the packages from `requirements.txt`, tests imports, checks FFmpeg, and pulls `llama3.2:3b` if needed. It does not edit GPU drivers or install Python/FFmpeg/Ollama silently.
+Return to the extracted ClipForge folder in File Explorer and **double-click `setup-windows.cmd`**. Keep its Command Prompt window open and read the output. It checks the three programs above, creates `venv\`, installs the project's Python packages, tests them, and pulls the local Ollama model if missing.
 
-Then double-click `run-windows.cmd`. If no browser tab opens, visit [http://127.0.0.1:7860](http://127.0.0.1:7860). Keep the Command Prompt window open while working. Close it or press Ctrl+C to stop the app.
+This can take a while on the first run. It does **not** silently install Python, FFmpeg, GPU drivers, or Ollama. If it reports a missing prerequisite, complete that section above and run it again.
 
-Alternatively, in Command Prompt:
+When it says **Setup complete**, double-click **`run-windows.cmd`**. If a browser tab does not open, visit [http://127.0.0.1:7860](http://127.0.0.1:7860). Leave the Command Prompt window open while using the app; press `Ctrl+C` to stop it.
 
-```bat
-cd /d C:\path\to\clipforge
-setup-windows.cmd
-run-windows.cmd
-```
+## 6. Create and review clips
 
-The script invokes `venv\Scripts\python.exe` directly, so you do **not** need to activate the venv or change PowerShell execution policy.
+- Upload a video, or paste its local path, such as `C:\Users\YourName\Videos\stream.mp4`. For a large file, pasting the path avoids an extra browser-upload copy.
+- Press **Generate clips** and watch the activity log.
+- Select and preview each candidate; the AI may choose weak moments, so review before publishing.
+- Click **Load editable captions**, correct the Greek text and `start`/`end` seconds in the JSON editor, choose a font, and click **Render corrected captions**. That produces a separate `_karaoke.mp4`; it does not overwrite the original clip.
 
-## Using videos and captions
-
-- Upload video files, or paste a local Windows path such as `C:\Users\You\Videos\recording.mp4` into the path box. For large videos, paste a local path to avoid making an extra browser upload copy.
-- Press **Generate clips**, then preview each result. One video is processed at a time.
-- Select a generated clip, press **Load editable captions**, and correct the caption JSON. Start/end values are seconds relative to the selected clip.
-- Choose a font and press **Render corrected captions**. The original clip remains unchanged; edited SRT/ASS and a separate karaoke MP4 are saved next to it.
-- An existing `transcript.srt` and scored chunk cache are reused on reruns. The first Whisper model download requires internet.
-
-### Karaoke limitations
-
-The saved SRT contains phrase timestamps but not Whisper's precise per-word timestamps. Word timing in the karaoke sweep is **estimated**; editing cue times and splitting caption rows can help, but exact sync requires storing original word timestamps in a future version. Pick a font that contains Greek letters. Rendering needs FFmpeg compiled with `ass`/libass. Check:
-
-```bat
-ffmpeg -hide_banner -filters | findstr ass
-ffmpeg -hide_banner -encoders | findstr libx264
-```
-
-## GPU and portability notes
-
-- On a supported NVIDIA system with compatible CUDA/cuDNN libraries, faster-whisper may use CUDA. Otherwise use CPU. The current program's CUDA detection is not a guarantee that a driver-only installation is sufficient.
-- On Windows, Ollama independently decides whether NVIDIA or AMD hardware is usable. Check `ollama ps` while scoring; a GPU is not guaranteed for every card/driver combination.
-- The Nobara/AMD `HSA_OVERRIDE_GFX_VERSION=10.3.0` systemd override is **Linux-specific**. Do not copy it to Windows.
-- Each Windows computer must run setup locally; copying `venv/` from Linux or another PC will fail.
+Caption word timing is **estimated** from phrase-level transcript timings, so adjust cue boundaries when the karaoke sweep is off. Use a font with Greek glyphs. Your first Whisper model download also requires internet.
 
 ## Troubleshooting
 
-- **Missing imports:** run `setup-windows.cmd` again, then launch with `run-windows.cmd`.
-- **FFmpeg not found:** ensure the correct `bin` directory is on PATH and reopen the terminal.
-- **Ollama timeout:** ensure the desktop app is running and use `ollama ps`. The scorer can cache successfully completed chunks so you can rerun without retranscribing.
-- **Subtitle render failure:** check the `ass` filter and your installed font. Paths with punctuation can be tricky in FFmpeg filters; inspect the app's error details.
-- **Weak clips:** inspect `transcript.srt` and review results manually. More generated clips do not necessarily mean better selections.
+| Problem | What to check |
+|---|---|
+| `py -3.12` not recognized | Install the Python 3.12 **64-bit installer** with the py launcher; reopen Command Prompt. |
+| `ffmpeg` or `ffprobe` not recognized | Add the extracted FFmpeg `bin` directory to your user PATH; reopen Command Prompt. |
+| `ollama` not recognized or not running | Install/launch Ollama, then open a new Command Prompt. |
+| Python package installation fails | Keep Python 3.12; the script installs binary wheels rather than compiling PyAV against a system FFmpeg. |
+| Caption render fails | Check `ffmpeg -hide_banner -filters | findstr ass` and try a short clip first. |
+| No useful clips | Inspect the saved `transcript.srt`; automatic scores are only suggestions. |
 
-## Status
+The project stores generated clips, SRT transcripts, and scoring cache in `clips\` next to the source code. Do **not** include `clips\`, videos, or `venv\` when sharing the repository.
 
-The `.cmd` launchers and Python files are **prepared for Windows**, but I have not run the whole app on a real Windows machine here. Treat it as a portable source release that needs a first-run test, particularly for Greek-path caption rendering and specific GPU drivers. Avoid advertising it as a validated Windows executable until you have tested that flow.
+## Hardware and testing status
+
+Whisper may use NVIDIA CUDA **only** when a compatible CTranslate2 CUDA/cuDNN runtime is installed; otherwise it should use CPU. Ollama handles its own NVIDIA/AMD GPU selection—check `ollama ps` during scoring. The AMD RX 6600 Linux systemd workaround is not a Windows setup step.
+
+These launchers were prepared for Windows but the complete app has **not yet been end-to-end tested on a Windows PC**. Test one short video and one caption render before relying on it for long recordings.
