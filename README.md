@@ -21,22 +21,29 @@ You should see `Python 3.12.x`. If `py` is not recognized, rerun the installer w
 
 ## 3. Install FFmpeg
 
-FFmpeg is a ZIP download, **not** an installer. Do this on the Windows PC:
+FFmpeg comes as a ZIP file, not an installer. Follow these steps **on your Windows PC**:
 
-1. Click [Download FFmpeg release essentials (ZIP)](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip). This is the Windows build provider linked from [FFmpeg's official download page](https://ffmpeg.org/download.html). You do not need to download FFmpeg source code.
-2. Open **Downloads** in File Explorer. Right-click `ffmpeg-release-essentials.zip` → **Extract All** → **Extract**.
-3. Open the extracted folder. There may be a second folder with a version number: open it too. Find the folder called **`bin`**. Inside `bin`, you should see `ffmpeg.exe` and `ffprobe.exe` (or `ffmpeg` and `ffprobe` shown as **Application** if Windows hides extensions).
-4. Move the **entire extracted FFmpeg folder** to a permanent location such as `C:fmpeg`. Keep its subfolders intact. For example, the files might now be at `C:fmpegfmpeg-9.0.2-essentials_buildinfmpeg.exe`. Your version-numbered folder may have a different name.
-5. Navigate back to the **`bin` folder containing `ffmpeg.exe`**. Click File Explorer's address bar at the top, then press `Ctrl+C` to copy the folder's full path. Copy the `bin` **folder path**, not the ZIP name or the `ffmpeg.exe` file path.
-6. Press **Start**, search for **Edit environment variables for your account**, and open it. In **User variables**, select **Path** → **Edit** → **New**. Paste the path you copied. Click **OK** on every window. Add a new entry; **do not delete existing Path entries**.
-7. Close Command Prompt if one is open. Open a **new Command Prompt** and enter these commands one at a time:
+1. Click [Download FFmpeg release essentials (ZIP)](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip).
+2. Open **File Explorer** by pressing the **Windows-logo key + E** on your keyboard. Click **Downloads** in the left-hand sidebar.
+3. Right-click `ffmpeg-release-essentials.zip`, then click **Extract All** → **Extract**.
+4. Open the extracted folder. If there is another folder inside with a version number in its name, open that too. Find the folder named **`bin`** and open it. You should see `ffmpeg.exe` and `ffprobe.exe`. If Windows hides file extensions, they may appear as `ffmpeg` and `ffprobe`, with **Application** shown as their file type.
+5. Go back to the folder **containing** `bin`. Move that whole folder to a permanent location where you will not delete it. For example, you can move it into `C:\ffmpeg`. Keep all its files and subfolders together.
+6. Open the moved folder, then open its **`bin`** folder again. Click the address bar at the top of File Explorer and press **Ctrl+C**. You have now copied the path to `bin`. It might look like `C:\ffmpeg\ffmpeg-9.0.2-essentials_build\bin`, but use the path shown on **your** PC.
+7. Click the **Windows logo** on the taskbar, usually at the bottom of the screen. Or press the **Windows-logo key** on your keyboard. Type `environment variables`.
+8. In the search results, click **Edit environment variables for your account**.
+9. Under **User variables**, click **Path** once, then click **Edit**. In the next window, click **New** and paste the `bin` path you copied. **Do not delete or replace any existing Path entries.**
+10. Click **OK** to close each window.
+11. Open a **new Command Prompt**: click the Windows logo, type `cmd`, and press **Enter**. If a Command Prompt was already open, close it first.
+12. Type these commands one at a time, pressing **Enter** after each:
 
-```bat
-ffmpeg -version
-ffprobe -version
-```
+    ```bat
+    ffmpeg -version
+    ffprobe -version
+    ```
 
-If **both** show version details, you're done. If one says “not recognized,” reopen the Path editor and check that the new entry points to the `bin` folder that actually contains both `.exe` files. Close and reopen Command Prompt after fixing it. **Do not run ClipForge setup until both commands work.**
+If **both** commands display version information, FFmpeg is ready. If either says **“not recognized,”** check that the Path entry points to the `bin` folder containing both `.exe` files. After correcting it, close Command Prompt, open a new one, and try the two commands again.
+
+**Do not run `setup-windows.cmd` until both commands work.**
 
 For karaoke caption support, you can also run:
 
