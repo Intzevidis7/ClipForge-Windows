@@ -86,3 +86,9 @@ Upload a short video or paste its Windows file path in ClipForge. Generate clips
 | First setup takes a long time | Package and AI model downloads need internet access and free disk space. |
 
 Generated videos and transcripts may be stored in `clips/` directory; do not add them, videos, or the local `venv/` directory to Git. The Windows launchers have not yet been fully end-to-end tested on a Windows PC; first test a short clip and caption render before processing long recordings.
+
+### Stop ClipForge
+
+Closing the browser tab does not stop ClipForge. Click the Command Prompt window opened by `run-windows.cmd` and press **Ctrl+C**. If Windows asks **Terminate batch job (Y/N)?**, type **Y** and press **Enter**. You can then close the Command Prompt window.
+
+Ollama is a separate app that may keep running in the background. To stop it too, find its icon near the Windows clock (click **↑** if it is hidden), right-click it, and choose **Quit**.
