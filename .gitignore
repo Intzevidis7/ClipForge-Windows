@@ -1,0 +1,12 @@
+venv/
+clips/
+__pycache__/
+*.pyc
+*.mp4
+*.mkv
+*.mov
+*.webm
+*.avi
+*.log
+.env
+*.save
